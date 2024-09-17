@@ -7,14 +7,24 @@ import {
   Textarea,
   Button,
   Stack,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
 } from '@chakra-ui/react';
 
 const EnquiryForm = () => {
   const [name, setName] = useState('');
   const [query, setQuery] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Manage the popup state
+  const cancelRef = React.useRef();
 
   const handleSubmit = e => {
     e.preventDefault();
+
     // Handle form submission (e.g., send data to a server)
     console.log('Name:', name);
     console.log('Query:', query);
@@ -22,6 +32,9 @@ const EnquiryForm = () => {
     // Clear the form fields
     setName('');
     setQuery('');
+
+    // Open the popup after submission
+    onOpen();
   };
 
   return (
@@ -48,7 +61,7 @@ const EnquiryForm = () => {
 
           <FormControl id="query" isRequired>
             <FormLabel fontFamily={'cursive'}>
-              What do you want to ask?
+              What do you want to ask?!
             </FormLabel>
             <Textarea
               value={query}
@@ -59,7 +72,7 @@ const EnquiryForm = () => {
           </FormControl>
 
           <Button
-            type="submit"
+            type="submit" // Keep the form submit type
             size="lg"
             fontFamily="cursive"
             border="2px"
@@ -70,6 +83,41 @@ const EnquiryForm = () => {
           </Button>
         </Stack>
       </form>
+
+      {/* Popup (AlertDialog) */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        backgroundColor={'orange.700'}
+        color={'white'}
+      >
+        <AlertDialogOverlay backdropFilter="blur(10px) ">
+          {' '}
+          {/* Apply background blur */}
+          <AlertDialogContent fontFamily={'cursive'} boxShadow="8px 5px black">
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Submission Successful
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Thank yoy for connecting, We will reach out to you shortly.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                ref={cancelRef}
+                onClick={onClose}
+                border="2px"
+                textAlign="center"
+                boxShadow="8px 5px black"
+              >
+                Close
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
